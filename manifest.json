@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "XSky Poster",
+  "version": "1.0",
+  "description": "Posta no X e Bluesky simultaneamente sem usar API.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "XSky Poster"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "notifications",
+    "scripting",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "*://*.x.com/*",
+    "*://*.bsky.app/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.x.com/intent/tweet*", "*://x.com/intent/tweet*"],
+      "js": ["content_x.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.bsky.app/intent/compose*", "*://bsky.app/intent/compose*"],
+      "js": ["content_bsky.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.x.com/notifications*"],
+      "js": ["notif_x.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.bsky.app/notifications*"],
+      "js": ["notif_bsky.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

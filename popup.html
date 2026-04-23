@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+  <title>XSky Poster</title>
+</head>
+<body>
+  <div class="container">
+    <div class="tabs">
+      <button id="tabPost" class="tab active">Postar</button>
+      <button id="tabX" class="tab">Notif X</button>
+      <button id="tabBsky" class="tab">Notif Bsky</button>
+    </div>
+
+    <!-- Área de Postagem -->
+    <div id="viewPost" class="view active">
+      <h2>XSky Poster</h2>
+      <p class="subtitle">Poste no X e Bluesky de uma vez só!</p>
+      
+      <textarea id="postText" placeholder="O que está acontecendo?"></textarea>
+      
+      <input type="file" id="imageInput" accept="image/*" style="display: none;">
+      <button id="imageBtn" class="secondary-btn">🖼️ Adicionar Imagem</button>
+      <img id="imagePreview" style="display: none; width: 100%; border-radius: 8px; margin-top: 4px; max-height: 200px; object-fit: cover;" />
+      
+      <button id="postBtn">🚀 Postar em Ambos</button>
+      
+      <div id="status"></div>
+    </div>
+
+    <!-- X Notifs -->
+    <div id="viewX" class="view" style="display: none;">
+      <div class="notif-header-action">
+        <button id="reloadXBtn" class="secondary-btn btn-small">🔄 Recarregar</button>
+        <span id="xLoader" class="loading-indicator" style="display: none;">⏳ Carregando em background...</span>
+      </div>
+      <div id="xNotifsList" class="notif-list" style="height: 350px;">
+         <p class="loading-text">Nenhuma notificação armazenada. Clique em Recarregar.</p>
+      </div>
+    </div>
+
+    <!-- Bsky Notifs -->
+    <div id="viewBsky" class="view" style="display: none;">
+      <div class="notif-header-action">
+        <button id="reloadBskyBtn" class="secondary-btn btn-small">🔄 Recarregar</button>
+        <span id="bskyLoader" class="loading-indicator" style="display: none;">⏳ Carregando em background...</span>
+      </div>
+      <div id="bskyNotifsList" class="notif-list" style="height: 350px;">
+         <p class="loading-text">Nenhuma notificação armazenada. Clique em Recarregar.</p>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
