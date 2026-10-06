@@ -4,6 +4,10 @@ if (window.location.href.includes('xsky=1')) {
     let imagePasted = false;
     let isPasting = false;
     
+    function progress(label) {
+        chrome.runtime.sendMessage({ action: 'progress', network: 'bsky', label });
+    }
+
     function base64ToFile(base64, filename) {
         const arr = base64.split(',');
         const mime = arr[0].match(/:(.*?);/)[1];
@@ -18,6 +22,7 @@ if (window.location.href.includes('xsky=1')) {
 
     async function attemptPostBsky() {
         attempts++;
+        if (attempts === 1) progress('Carregando o compositor...');
         if (attempts > 30) {
             chrome.runtime.sendMessage({ action: 'postResult', network: 'Bluesky', status: 'error', message: 'Tempo limite excedido para carregar.' });
             return; 
@@ -31,6 +36,7 @@ if (window.location.href.includes('xsky=1')) {
                 isPasting = true;
                 chrome.storage.local.get(['postImage'], async (result) => {
                     if (result.postImage) {
+                        progress('Anexando imagem...');
                         try {
                             // 1. Converte Imagem
                             const arr = result.postImage.split(',');
@@ -49,6 +55,7 @@ if (window.location.href.includes('xsky=1')) {
                                 document.addEventListener('click', (e) => {
                                     const btn = e.target.closest('[data-testid="composerPublishBtn"]');
                                     if (btn && !btn.disabled) {
+                                        progress('Publicando...');
                                         setTimeout(() => {
                                             chrome.runtime.sendMessage({ action: 'postResult', network: 'Bluesky', status: 'success', dontClose: true });
                                         }, 1000);
@@ -59,11 +66,13 @@ if (window.location.href.includes('xsky=1')) {
                             
                             // Tenta injetar a imagem via Paste visual
                             const pasteEvent = new ClipboardEvent("paste", { clipboardData: dataTransfer, bubbles: true, cancelable: true });
-                            const editable = textArea.querySelector('[contenteditable="true"]') || textArea;
+                            const editable = document.querySelector('.ProseMirror[contenteditable="true"]') ||
+                                             document.querySelector('[contenteditable="true"]');
                             editable.focus();
                             editable.dispatchEvent(pasteEvent);
                             
                             imagePasted = true;
+                            progress('Aguardando seu clique em "Postar"');
                             // Aguarda o clique manual do usuário
                             return; 
                             
@@ -73,6 +82,7 @@ if (window.location.href.includes('xsky=1')) {
                     } else {
                         // Sem imagem: Posta 100% automático
                         imagePasted = true; // Flag para não repetir
+                        progress('Publicando...');
                         publishButton.click();
                         
                         setTimeout(() => {
